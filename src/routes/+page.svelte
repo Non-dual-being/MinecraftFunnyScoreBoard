@@ -6,7 +6,11 @@
   <section class="hero-card">
     <p class="eyebrow">Jungle Speed × Unreal Tournament</p>
 
-    <h1>MinecraftNoobsBrawls 2026</h1>
+    <h1 class="hero-title">
+        <span>Minecraft</span>
+        <span>NoobsBrawls</span>
+        <span class="hero-year">2026</span>
+    </h1>
 
     <p class="lead">
       Maak teams aan, voeg spelers toe, registreer wins en laat het scorebord
