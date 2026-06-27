@@ -16,9 +16,10 @@
 
   let { data, form }: AdminPageProps = $props();
 
-  let scoreboardState = $state<ScoreboardState>(data.state);
-  let adminSplashText = $state<string | null>(null);
+  let liveScoreboardState = $state<ScoreboardState | null>(null);
+  let scoreboardState = $derived(liveScoreboardState ?? data.state);
 
+  let adminSplashText = $state<string | null>(null);
   let adminSplashTimer: ReturnType<typeof setTimeout> | null = null;
 
   const isEnded = $derived(scoreboardState.session.status === 'ended');
@@ -48,12 +49,12 @@
   }
 
   onMount(() => {
-    const events = new EventSource(
-      `/api/sessions/${scoreboardState.session.id}/events`
-    );
+    const sessionId = data.state.session.id;
+
+    const events = new EventSource(`/api/sessions/${sessionId}/events`);
 
     function handleStateUpdate(event: Event): void {
-      scoreboardState = parseScoreboardState(event);
+      liveScoreboardState = parseScoreboardState(event);
     }
 
     events.addEventListener('state', handleStateUpdate);

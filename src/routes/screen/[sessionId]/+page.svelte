@@ -13,7 +13,9 @@
 
   let { data }: ScreenPageProps = $props();
 
-  let scoreboardState = $state<ScoreboardState>(data.state);
+  let liveScoreboardState = $state<ScoreboardState | null>(null);
+  let scoreboardState = $derived(liveScoreboardState ?? data.state);
+
   let championFlash = $state(false);
   let latestFlash = $state(false);
   let winSplashText = $state<string | null>(null);
@@ -35,9 +37,11 @@
       (team) => team.id === latestMatch.winningTeamId
     );
 
-    return `${foundTeam?.emoji ?? '🎮'} ${foundTeam?.name ?? 'Een team'} won ${gameLabel(
+    return `${foundTeam?.emoji ?? '🎮'} ${
+      foundTeam?.name ?? 'Een team'
+    } won ${gameLabel(latestMatch.gameType)} — ${gameWinText(
       latestMatch.gameType
-    )} — ${gameWinText(latestMatch.gameType)}`;
+    )}`;
   }
 
   function latestMessage(): string {
@@ -57,9 +61,8 @@
   }
 
   onMount(() => {
-    const events = new EventSource(
-      `/api/sessions/${scoreboardState.session.id}/events`
-    );
+    const sessionId = data.state.session.id;
+    const events = new EventSource(`/api/sessions/${sessionId}/events`);
 
     let receivedInitialEvent = false;
 
@@ -72,7 +75,7 @@
       const nextLeaderId = nextScoreboardState.leaderboard[0]?.id;
       const nextLatestMatchId = nextScoreboardState.matches[0]?.id;
 
-      scoreboardState = nextScoreboardState;
+      liveScoreboardState = nextScoreboardState;
 
       if (!receivedInitialEvent) {
         receivedInitialEvent = true;
@@ -80,7 +83,8 @@
       }
 
       const hasNewMatch =
-        Boolean(nextLatestMatchId) && nextLatestMatchId !== previousLatestMatchId;
+        Boolean(nextLatestMatchId) &&
+        nextLatestMatchId !== previousLatestMatchId;
 
       if (hasNewMatch) {
         latestFlash = true;
