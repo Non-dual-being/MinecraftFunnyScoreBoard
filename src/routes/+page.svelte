@@ -6,7 +6,7 @@
   <section class="hero-card">
     <p class="eyebrow">Jungle Speed × Unreal Tournament</p>
 
-    <h1>Team Battle Score Arena</h1>
+    <h1>MinecraftNoobsBrawls 2026</h1>
 
     <p class="lead">
       Maak teams aan, voeg spelers toe, registreer wins en laat het scorebord
